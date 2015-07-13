@@ -1,0 +1,39 @@
+#fermate_metro {
+  marker-width: 5;
+  marker-fill: hotpink;
+
+  [zoom > 12]{
+    text-name: [FERMATA];
+    text-dy: 16;
+    text-face-name: 'Arial';
+    marker-width: 10;
+    text-stroke: black;
+    text-fill:white;
+  }
+
+  [FERMATA="CORDUSIO"]{
+    marker-width: 12;
+    marker-fill: crimson;
+    stroke-width: 4;
+  };
+
+  [FERMATA="LORETO"]{
+    marker-width: 15;
+    marker-fill: skyblue;
+    z-index:10;
+  };
+
+};
+
+#ztlbg{
+  polygon-fill: lightblue;
+  polygon-opacity: 0.4,
+  line-color: crimson;
+
+  [zoom > 12]{
+    text-name : [NOME_ZTL];
+    text-fill: crimson;
+    text-face-name: 'Arial';
+  }
+
+}

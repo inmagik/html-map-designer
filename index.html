@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html ng-app="HtmlMap" ng-controller="BodyCtrl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title>{{data.config.mapConfig.title}}</title>
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="css/loader.css" media="screen">
+    <link rel="stylesheet" href="css/style.css" media="screen">
+    <link rel="stylesheet" href="lib/ol3/ol.css" media="screen">
+    <link rel="stylesheet" href="lib/ol3-popup/src/ol3-popup.css" media="screen">
+    <link rel="stylesheet" href="lib/ol3-layerswitcher/src/ol3-layerswitcher.css" media="screen" title="no title" charset="utf-8">
+
+    <!--<base href="/" />-->
+
+  </head>
+  <body class="ng-cloak">
+
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">
+            html-map-designer
+          </a>
+        </div>
+        <div class="navbar-right">
+            <button type="button" class="btn btn-default navbar-btn" ng-click="updateMap()">Update</button>
+        </div>
+
+  </div>
+</nav>
+
+
+    <div class="map" the-map map-handle="main-map" configuration="data.config">
+    </div>
+
+    <div class="map-editor">
+
+      <div class="map-editor-config flex-container">
+        <div class="pane-title" ng-class="{'pane-title-error' : data.mapConfigError}">Config</div>
+        <div class="ace-ed flex-item" ui-ace="{'mode' : 'json'}" ng-model="data.configString.mapConfig"></div>
+      </div>
+      <div class="map-style-config flex-container" >
+        <div class="pane-title">Style</div>
+        <div class="ace-ed flex-item" ui-ace="{'mode' : 'less'}" ng-model="data.configString.geoStyle"></div>
+      </div>
+
+
+    </div>
+
+
+    <script src="lib/ol3/ol-debug.js" charset="utf-8"></script>
+    <script src="lib/ol3-popup/src/ol3-popup.js" charset="utf-8"></script>
+    <script src="lib/ol3-layerswitcher/src/ol3-layerswitcher.js" charset="utf-8"></script>
+
+    <script src="lib/underscore/underscore-min.js" charset="utf-8"></script>
+    <script src="lib/carto/carto.js" charset="utf-8"></script>
+    <script src="lib/github-api/github.js"></script>
+
+    <!--<script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>-->
+
+    <script type="text/javascript" src="lib/ace-builds/src-min-noconflict/ace.js"></script>
+
+    <script src="lib/angular/angular.min.js"></script>
+    <script type="text/javascript" src="lib/angular-modal-service/dst/angular-modal-service.min.js">
+    </script>
+
+    <script type="text/javascript" src="lib/angular-ui-ace/ui-ace.js"></script>
+
+    <script src="js/app.js" charset="utf-8"></script>
+    <script src="js/services.js" charset="utf-8"></script>
+    <script src="js/repoconfig.js" charset="utf-8"></script>
+    <script src="js/controllers.js" charset="utf-8"></script>
+    <script src="js/directives.js" charset="utf-8"></script>
+
+  </body>
+</html>

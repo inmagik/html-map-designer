@@ -1,0 +1,15 @@
+{
+  "name": "v3.6.0-dist",
+  "_cacheHeaders": {
+    "ETag": "\"b0e3051a72da6477b9dfa1ad197b15f4\"",
+    "Last-Modified": "Sun, 07 Jun 2015 13:26:33 GMT",
+    "Content-Length": "840203",
+    "Content-Type": "application/octet-stream",
+    "Content-Disposition": "attachment; filename=v3.6.0-dist.zip"
+  },
+  "_release": "e-tag:b0e3051a7",
+  "_source": "https://github.com/openlayers/ol3/releases/download/v3.6.0/v3.6.0-dist.zip",
+  "_target": "*",
+  "_originalSource": "https://github.com/openlayers/ol3/releases/download/v3.6.0/v3.6.0-dist.zip",
+  "_direct": true
+}
