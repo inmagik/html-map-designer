@@ -34,4 +34,13 @@ app.on('ready', function() {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  /*
+  mainWindow.on('resize', function() {
+    var s = mainWindow.getSize();
+    console.log("resize", s);
+  });
+  */
+
+
 });
