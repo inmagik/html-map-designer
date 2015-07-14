@@ -25,16 +25,46 @@
             html-map-designer
           </a>
         </div>
-        <div class="navbar-right">
-            <button type="button" class="btn btn-default navbar-btn" ng-click="updateMap()">Update</button>
+        <div class="navbar-left">
         </div>
+        <div class="navbar-right">
+
+
+
+        </div>
+
+        <form class="navbar-form navbar-right">
+          <button type="button" class="btn btn-default" ng-click="updateMap()">Update</button>
+          <div class="checkbox navbar-btn">
+            <label class="navbar-link">
+                <input type="checkbox" ng-model="ui.autoZoom">
+                Auto zoom
+            </label>
+        </div>
+
+    </form>
+
 
   </div>
 </nav>
 
+    <div class="map-container">
+      <div class="map" the-map map-handle="main-map" configuration="data.config">
+      </div>
+      <nav class="navbar navbar-inverse map-toolbar">
+        <div class="container-fluid">
 
-    <div class="map" the-map map-handle="main-map" configuration="data.config">
+          <div class="navbar-left">
+            <button type="button" class="btn btn-sm btn-default navbar-btn" ng-click="resetMap()">Reset zoom</button>
+            <button type="button" class="btn btn-sm btn-default navbar-btn" ng-click="setCenter()">Center here</button>
+          </div>
+
+
     </div>
+  </nav>
+
+    </div>
+
 
     <div class="map-editor">
 

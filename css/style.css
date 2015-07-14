@@ -8,14 +8,6 @@ body{
   opacity: 0;
 }
 
-.map{
-  background-color: #222;
-  position:absolute;
-  left:0px;
-  right:50%;
-  bottom:0px;
-  top:50px;
-}
 
 
 .map-editor{
@@ -66,4 +58,28 @@ body{
 .pane-title-error{
   background-color: rgba(200,0,0, .5);
 
+}
+
+.map-toolbar{
+  margin-bottom:0px;
+}
+
+.map-container {
+    position:absolute;
+    left:0px;
+    right:50%;
+    bottom:0px;
+    top:50px;
+
+    /* flexbox specific properties */
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+  }
+
+.map{
+  background-color: #222;
+  -webkit-flex: auto;
+  flex: auto;
 }

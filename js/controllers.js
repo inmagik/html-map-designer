@@ -5,6 +5,7 @@
   .controller('BodyCtrl', function($scope, $timeout, ConfigService, MapsControllerDelegate, ModalService, $location, $rootScope){
 
     $scope.data = { config : null, configString : null, mapConfigError:false, geoStyleError:false };
+    $scope.ui = { autoZoom : true };
 
     var s = $location.search();
 
@@ -15,10 +16,7 @@
               mapConfig : data[0],
               geoStyle : data[1]
           };
-          $scope.data.configString = {
-              mapConfig : JSON.stringify(data[0], null, 4),
-              geoStyle : data[1]
-          };
+          updateCfg();
         });
       });
 
@@ -30,10 +28,7 @@
               mapConfig : data[0],
               geoStyle : data[1]
           };
-          $scope.data.configString = {
-              mapConfig : JSON.stringify(data[0], null, 4),
-              geoStyle : data[1]
-          };
+          updateCfg();
 
         });
 
@@ -41,14 +36,53 @@
 
     };
 
+    var updateCfg = function(){
+      $timeout(function(){
+
+        $scope.data.configString = {
+            mapConfig : JSON.stringify($scope.data.config.mapConfig, null, 4),
+            geoStyle : $scope.data.config.geoStyle
+        };
+
+      });
+
+
+    }
+
     $scope.resetMap = function(){
       MapsControllerDelegate.applyMethod(function(){
         this.resetMap()
       });
     };
 
+
+    $scope.setCenter = function(){
+      var c;
+      var cfg = $scope.data.config.mapConfig.map;
+      MapsControllerDelegate.applyMethod(function(){
+        var x = this.map.getView();
+        console.log("c", x.getProjection())
+        c = x.getCenter();
+        if(cfg.centerProjection){
+          c = this.fromInternalPoint(c, cfg.centerProjection || 'EPSG:3857')
+        }
+
+      });
+      console.log(1,c)
+
+
+
+
+      $scope.data.config.mapConfig.map.center = c;
+      updateCfg();
+
+
+    };
+
+    /*
+    This updates map config from string config (the one in editors)
+    */
     $scope.updateMap = function(){
-      //var currentZoom =
       var x,z,c;
       MapsControllerDelegate.applyMethod(function(){
         x = this.map.getView();
@@ -67,6 +101,7 @@
         return;
       }
 
+      //setting config
       $timeout(function(){
         $scope.data.mapConfigError = false;
         $scope.data.config = {
@@ -74,13 +109,23 @@
             geoStyle : $scope.data.configString.geoStyle
         };
 
-        $rootScope.$on('map-config-loaded-main-map', function(){
-          MapsControllerDelegate.applyMethod(function(){
-            console.log("zz", z, c)
-            this.setZoom(z);
-            this.setCenter(c);
+        //going back to previous zoom and center
+        if(!$scope.ui.autoZoom){
+          return
+        }
+        var xx =  $rootScope.$on('map-config-loaded-main-map', function(){
+            MapsControllerDelegate.applyMethod(function(){
+              if(z){
+                  this.setZoom(z);
+              }
+              if(c){
+                  this.setCenter(c);
+              }
+
+            });
+            xx();
           });
-        })
+
 
       });
 
