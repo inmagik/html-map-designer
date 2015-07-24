@@ -9,7 +9,7 @@
 
     var loadConfig = function(){
       var deferred = $q.defer();
-      $http.get('config/mapconfig.json')
+      $http.get('config/mapconfig.base.json')
       .then(function (resp) {
         svc.config = resp.data;
         deferred.resolve(resp.data);

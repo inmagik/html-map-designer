@@ -11,11 +11,39 @@
   })
 
 
-  .controller('StartCtrl', function($scope,  $rootScope, $timeout){
+  .controller('StartCtrl', function($scope,  $rootScope, $timeout, ConfigService, $state){
 
     $timeout(function(){
       $rootScope.ui.mainViewClass = 'mantle';
-    })
+    });
+
+
+    $scope.loadGithub = function(repo){
+      ConfigService.getGitHubConfig(repo).then(function(data){
+        $timeout(function(){
+          $rootScope.config = {
+              mapConfig : data[0],
+              geoStyle : data[1]
+          };
+          $state.go("map-editor");
+          
+        });
+      });
+    };
+
+    $scope.createMap = function(){
+      ConfigService.getLocalConfig().then(function(data){
+        $timeout(function(){
+          $rootScope.config = {
+              mapConfig : data[0],
+              geoStyle : data[1]
+          };
+          $state.go("map-editor");
+        });
+
+      });
+
+    };
 
 
 
@@ -33,10 +61,18 @@
 
 
 
-  .controller('MapCtrl', function($scope, $timeout, ConfigService, MapsControllerDelegate, ModalService, $location, $rootScope, $q, $modal){
+  .controller('MapCtrl', function($scope, $timeout, ConfigService, MapsControllerDelegate, ModalService, $location, $rootScope, $q, $modal, $state){
 
     $scope.data = { config : null, configString : null, mapConfigError:false, geoStyleError:false };
     $scope.ui = { autoZoom : true, panels : { layers:true} };
+
+    if(!$rootScope.config){
+      $state.go('start');
+    }
+    $timeout(function(){
+        $scope.data.config = $rootScope.config
+        updateCfg();
+    });
 
     function fixWidthHelper(e, ui) {
       ui.children().each(function() {
@@ -58,8 +94,10 @@
 
     }
 
-    var s = $location.search();
+  
+  
 
+    /*
     if (s.repo){
       ConfigService.getGitHubConfig(s.repo).then(function(data){
         $timeout(function(){
@@ -86,6 +124,7 @@
       });
 
     };
+    */
 
     var updateCfg = function(){
       var deferred = $q.defer();
