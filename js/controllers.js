@@ -11,11 +11,32 @@
   })
 
 
-  .controller('StartCtrl', function($scope,  $rootScope, $timeout, ConfigService, $state){
+  .controller('StartCtrl', function($scope,  $rootScope, $timeout, ConfigService, $state, $modal){
 
     $timeout(function(){
       $rootScope.ui.mainViewClass = 'mantle';
     });
+
+
+    $scope.openLoadGitHubModal = function () {
+
+      
+      var modalInstance = $modal.open({
+        templateUrl: "templates/load-github.html",
+        controller: 'ModalInstanceCtrl',
+        resolve: {
+          cfg: function () {
+            return {repo:'', user:''};
+          }
+        }
+      });
+
+      modalInstance.result.then(function (ocfg) {
+        var repo = ocfg.user + ":" + ocfg.repo;
+        $scope.loadGithub(repo);
+      
+      });
+    }
 
 
     $scope.loadGithub = function(repo){
