@@ -154,3 +154,15 @@ body{
     -ms-user-select: none;
     user-select: none;
 }
+
+.geolocation-control{
+  top: 65px;
+  left: .5em;
+}
+.ol-touch .geolocation-control{
+  top: 80px;
+}
+
+.ol-control.toggled > button {
+  background-color: red !important;
+}
