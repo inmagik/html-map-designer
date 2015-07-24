@@ -12,71 +12,14 @@
     <link rel="stylesheet" href="lib/ol3/ol.css" media="screen">
     <link rel="stylesheet" href="lib/ol3-popup/src/ol3-popup.css" media="screen">
     <link rel="stylesheet" href="lib/ol3-layerswitcher/src/ol3-layerswitcher.css" media="screen" title="no title" charset="utf-8">
+    <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 
     <!--<base href="/" />-->
 
   </head>
   <body class="ng-cloak">
 
-    <nav class="navbar navbar-inverse">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">
-            html-map-designer
-          </a>
-        </div>
-        <div class="navbar-left">
-        </div>
-        <div class="navbar-right">
-
-
-
-        </div>
-
-        <form class="navbar-form navbar-right">
-          <button type="button" class="btn btn-default" ng-click="updateMap()">Update</button>
-          <div class="checkbox navbar-btn">
-            <label class="navbar-link">
-                <input type="checkbox" ng-model="ui.autoZoom">
-                Auto zoom
-            </label>
-        </div>
-
-    </form>
-
-
-  </div>
-</nav>
-
-    <div class="map-container">
-      <div class="map" the-map map-handle="main-map" configuration="data.config">
-      </div>
-      <nav class="navbar navbar-inverse map-toolbar">
-        <div class="container-fluid">
-
-          <div class="navbar-left">
-            <button type="button" class="btn btn-sm btn-default navbar-btn" ng-click="resetMap()">Reset zoom</button>
-            <button type="button" class="btn btn-sm btn-default navbar-btn" ng-click="setCenter()">Center here</button>
-          </div>
-
-
-    </div>
-  </nav>
-
-    </div>
-
-
-    <div class="map-editor">
-
-      <div class="map-editor-config flex-container">
-        <div class="pane-title" ng-class="{'pane-title-error' : data.mapConfigError}">Config</div>
-        <div class="ace-ed flex-item" ui-ace="{'mode' : 'json'}" ng-model="data.configString.mapConfig"></div>
-      </div>
-      <div class="map-style-config flex-container" >
-        <div class="pane-title">Style</div>
-        <div class="ace-ed flex-item" ui-ace="{'mode' : 'less'}" ng-model="data.configString.geoStyle"></div>
-      </div>
-
+    <div ui-view class="fullscreen {{ ui.mainViewClass }}">
 
     </div>
 
@@ -89,11 +32,22 @@
     <script src="lib/carto/carto.js" charset="utf-8"></script>
     <script src="lib/github-api/github.js"></script>
 
-    <!--<script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>-->
+    <script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-ui/jquery-ui.min.js"></script>
+    
+
+    <!-- <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script> -->
 
     <script type="text/javascript" src="lib/ace-builds/src-min-noconflict/ace.js"></script>
 
     <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/ui-bootstrap/ui-bootstrap-tpls-0.13.1.min.js"></script>
+    <script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="lib/angular-ui-sortable/sortable.min.js"></script>
+
+
+
+
     <script type="text/javascript" src="lib/angular-modal-service/dst/angular-modal-service.min.js">
     </script>
 

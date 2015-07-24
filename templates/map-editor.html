@@ -1,0 +1,147 @@
+<div class="" ng-controller="BodyCtrl">
+
+
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <p class="navbar-text " style="color:white">
+        <a ui-sref="start"><i class="glyphicon glyphicon-home" ></i></a>
+        MAP DESIGNER | {{ data.config.mapConfig.title }}
+      </p>
+      <a class="navbar-brand white">
+        
+        
+      </a>
+    </div>
+    <div class="navbar-left">
+    </div>
+    <div class="navbar-right">
+
+
+
+    </div>
+
+    <form class="navbar-form navbar-right">
+      <button type="button" class="btn btn-default" ng-click="updateMap()">Update</button>
+      <div class="checkbox navbar-btn">
+        <label class="navbar-link">
+            <input type="checkbox" ng-model="ui.autoZoom">
+            Auto zoom
+        </label>
+    </div>
+
+</form>
+
+
+</div>
+</nav>
+
+<div class="map-container">
+  <div class="map" the-map map-handle="main-map" configuration="data.config">
+  </div>
+  <nav class="navbar navbar-inverse map-toolbar">
+    <div class="container-fluid">
+
+      <div class="navbar-left">
+        <button type="button" class="btn btn-sm btn-default navbar-btn" ng-click="resetMap()">Reset zoom</button>
+        <button type="button" class="btn btn-sm btn-default navbar-btn" ng-click="setCenter()">Center here</button>
+      </div>
+
+
+</div>
+</nav>
+
+</div>
+
+
+<div class="map-editor">
+
+  <!--
+  <div class="map-editor-config flex-container">
+    <div class="pane-title" ng-class="{'pane-title-error' : data.mapConfigError}">Config</div>
+    <div class="ace-ed flex-item" ui-ace="{'mode' : 'json'}" ng-model="data.configString.mapConfig"></div>
+  </div>
+  <div class="map-style-config flex-container" >
+    <div class="pane-title">Style</div>
+    <div class="ace-ed flex-item" ui-ace="{'mode' : 'less'}" ng-model="data.configString.geoStyle"></div>
+  </div>
+-->
+
+<accordion close-others="false" >
+    <accordion-group is-open="status.layers">
+      <accordion-heading class="panel-warning">
+          Layers <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.layers, 'glyphicon-chevron-right': !status.layers}"></i>
+      </accordion-heading>
+      <div style="xheight:300px">
+
+        <div class="btn-group" dropdown is-open="status.isopen">
+      <button id="single-button" type="button" class="btn btn-primary" dropdown-toggle ng-disabled="disabled">
+        Add layer <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="single-button">
+        <li role="menuitem"><a ng-click="openLayerModal('osm')">OpenStreetMap</a></li>
+        <li role="menuitem"><a ng-click="openLayerModal('cartodb')" href="#">CartoDB</a></li>
+        <li role="menuitem"><a ng-click="openLayerModal('stamen')" href="#">Stamen</a></li>
+        <li role="menuitem"><a href="#">MapQuest</a></li>
+        <li class="divider"></li>
+        <!--
+        <li role="menuitem"><a href="#">Action</a></li>
+        <li role="menuitem"><a href="#">Another action</a></li>
+        <li role="menuitem"><a href="#">Something else here</a></li>
+        <li class="divider"></li>
+        <li role="menuitem"><a href="#">Separated link</a></li>
+        -->
+      </ul>
+    </div>
+        <!--
+        <ul class="nav nav-pills nav-stacked layers-list" ui-sortable="sortableOptions" ng-model="data.config.mapConfig.layers">
+          <li role="presentation" ng-repeat="layer in data.config.mapConfig.layers"><a href="#">
+          {{layer.name}}
+          </a></li>
+        </ul>
+        -->
+        <table class="table table-striped" >
+          <tbody ui-sortable="sortableOptions" ng-model="data.config.mapConfig.layers">
+
+
+          <tr ng-repeat="layer in data.config.mapConfig.layers track by $index">
+            <td>
+              <a class="btn btn-link"><i class="glyphicon glyphicon-menu-hamburger"></i></a>
+            </td>
+            <td>
+                {{layer.name}}
+            </td>
+            <td>
+              <a class="btn btn-link" ng-click="openLayerModal(layer.layerType, layer)">edit</a>
+              <a class="btn btn-link" ng-click="spliceLayer(layer, $index)">
+                <i class="glyphicon glyphicon-trash"></i>
+              </a>
+            </td>
+          </tr>
+          </tbody>
+
+        </table>
+
+
+      </div>
+  </accordion-group>
+    <accordion-group is-open="status.open">
+        <accordion-heading class="panel-warning">
+            Config <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+        </accordion-heading>
+        <div class="xace-ed" style="height:300px" ui-ace="{'mode' : 'json'}" ng-model="data.configString.mapConfig"></div>
+    </accordion-group>
+    <accordion-group is-open="status.open2">
+        <accordion-heading>
+            Style <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open2, 'glyphicon-chevron-right': !status.open2}"></i>
+        </accordion-heading>
+        <div class="xace-ed" style="height:300px" ui-ace="{'mode' : 'less'}" ng-model="data.configString.geoStyle"></div>
+    </accordion-group>
+  </accordion>
+
+
+</div>
+
+
+</div>
