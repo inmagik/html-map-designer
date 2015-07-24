@@ -69,9 +69,9 @@
 -->
 
 <accordion close-others="false" >
-    <accordion-group is-open="status.layers">
+    <accordion-group is-open="ui.panels.layers">
       <accordion-heading class="panel-warning">
-          Layers <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.layers, 'glyphicon-chevron-right': !status.layers}"></i>
+          Layers <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': ui.panels.layers, 'glyphicon-chevron-right': !ui.panels.layers}"></i>
       </accordion-heading>
       <div style="xheight:300px">
 
@@ -85,6 +85,7 @@
         <li role="menuitem"><a ng-click="openLayerModal('stamen')" href="#">Stamen</a></li>
         <li role="menuitem"><a href="#">MapQuest</a></li>
         <li class="divider"></li>
+        <li role="menuitem"><a ng-click="openLayerModal('geojson')" href="#">GeoJSON</a></li>
         <!--
         <li role="menuitem"><a href="#">Action</a></li>
         <li role="menuitem"><a href="#">Another action</a></li>

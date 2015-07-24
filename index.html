@@ -23,6 +23,14 @@
 
     </div>
 
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        //https://github.com/atom/electron/issues/254
+        try{
+            window.$ = window.jQuery = require('./lib/jquery/dist/jquery.min.js');
+        } catch(err){}
+    </script>
+
 
     <script src="lib/ol3/ol-debug.js" charset="utf-8"></script>
     <script src="lib/ol3-popup/src/ol3-popup.js" charset="utf-8"></script>
@@ -32,13 +40,15 @@
     <script src="lib/carto/carto.js" charset="utf-8"></script>
     <script src="lib/github-api/github.js"></script>
 
-    <script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
+    
     <script type="text/javascript" src="lib/jquery-ui/jquery-ui.min.js"></script>
     
 
     <!-- <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script> -->
 
     <script type="text/javascript" src="lib/ace-builds/src-min-noconflict/ace.js"></script>
+
+
 
     <script src="lib/angular/angular.min.js"></script>
     <script src="lib/ui-bootstrap/ui-bootstrap-tpls-0.13.1.min.js"></script>

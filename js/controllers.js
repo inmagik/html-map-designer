@@ -36,7 +36,7 @@
   .controller('MapCtrl', function($scope, $timeout, ConfigService, MapsControllerDelegate, ModalService, $location, $rootScope, $q, $modal){
 
     $scope.data = { config : null, configString : null, mapConfigError:false, geoStyleError:false };
-    $scope.ui = { autoZoom : true };
+    $scope.ui = { autoZoom : true, panels : { layers:true} };
 
     function fixWidthHelper(e, ui) {
       ui.children().each(function() {
