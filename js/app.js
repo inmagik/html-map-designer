@@ -2,7 +2,7 @@
   "use strict";
 
   angular.module("HtmlMap", ['angularModalService', 'ui.ace', 'ui.router', 'ui.bootstrap', 
-      'ui.sortable', 'ui.slider'])
+      'ui.sortable'])
   .config(function($locationProvider, $stateProvider, $urlRouterProvider){
     /*
     $locationProvider.html5Mode(
