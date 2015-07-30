@@ -61,6 +61,16 @@
     };
 
     $scope.openLoadDropboxFolderModal = function () {
+
+      DropBoxService.chooseWithModal("folder")
+            .then(function(folder){
+              var ocfg = {};
+              ocfg.configUrl = folder+"/mapconfig.json";
+              ocfg.styleUrl = folder+"/geostyle.css";
+              $scope.loadDropbox(ocfg);
+            });
+
+      return;
       
       var modalInstance = $modal.open({
         templateUrl: "templates/load-dropbox-folder.html",

@@ -4,7 +4,7 @@
   
 
   angular.module("HtmlMap")
-  .factory('DropBoxService', function($http, $q){
+  .factory('DropBoxService', function($http, $q, $modal){
 
     var svc = {  };
     svc.client = new Dropbox.Client({key: '7jgs6m9jfn508k9'})
@@ -66,7 +66,31 @@
         p.push(svc.loadFile(f));
       })
       return $q.all(p);
-    }
+    };
+
+    svc.chooseWithModal = function(mode){
+      var out = $q.defer();
+      var tpl = mode == 'file' ? 'templates/get-dropbox-file.html' : 'templates/get-dropbox-folder.html';
+      var modalInstance = $modal.open({
+          templateUrl: tpl,
+          controller: 'ModalInstanceCtrl',
+          resolve: {
+            cfg: function () {
+              return { };
+            }
+          }
+        });
+        modalInstance.result.then(function (ocfg){
+          var value = mode == 'file' ? ocfg.file : ocfg.folder;
+          out.resolve(value)
+        })
+      return out.promise;
+    };
+
+    svc.chooseFolderWithModal = function(){
+      var out = $q.defer();
+      return out.promise;
+    };
 
     return svc;
 
@@ -181,7 +205,7 @@
     };
   }])
 
-.directive('dropboxChooseButton', ['$timeout', '$modal',function($timeout, $modal){
+.directive('dropboxChooseButton', ['$timeout', 'DropBoxService',function($timeout, DropBoxService){
     // Runs during compile
     return {
       scope: {}, // {} = isolate, true = child, false/undefined = no change
@@ -191,24 +215,11 @@
 
         var tpl = iAttrs.mode == 'file' ? 'templates/get-dropbox-file.html' : 'templates/get-dropbox-folder.html';
 
-
-
         $scope.choose = function(){
-          var modalInstance = $modal.open({
-          templateUrl: tpl,
-          controller: 'ModalInstanceCtrl',
-          resolve: {
-            cfg: function () {
-              return { };
-            }
-          }
-        });
-
-          modalInstance.result.then(function (ocfg){
-            var value = iAttrs.mode == 'file' ? ocfg.file : ocfg.folder;
-            ngModelController.$setViewValue(value);
-          })
-
+          return DropBoxService.chooseWithModal(iAttrs.mode)
+            .then(function(value){
+              ngModelController.$setViewValue(value);  
+            })
         } 
         iElm.on('click', $scope.choose);
       }
