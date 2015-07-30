@@ -178,7 +178,24 @@
     $scope.spliceLayer = function(l, pos){
       $scope.data.config.mapConfig.layers.splice(pos, 1);
       updateCfg().then($scope.updateMap)
+    }
 
+    $scope.toggleLayer = function(l, pos){
+      var l = $scope.data.config.mapConfig.layers[pos];
+      if(l.layerOptions.visible === undefined){
+        l.layerOptions.visible  = false;
+      } else {
+        l.layerOptions.visible = !!!l.layerOptions.visible;  
+      }
+
+      MapsControllerDelegate.applyMethod(function(){
+        var layers = this.map.getLayers();
+        var l = layers.item(pos);
+        var v = l.get('visible')
+        l.set('visible', !v);
+      });
+      
+      //updateCfg().then($scope.updateMap)
     }
 
   

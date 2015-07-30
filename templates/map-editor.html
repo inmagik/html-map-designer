@@ -120,6 +120,9 @@
               <a class="btn btn-link" ng-click="spliceLayer(layer, $index)">
                 <i class="glyphicon glyphicon-trash"></i>
               </a>
+              <a class="btn btn-link" ng-click="toggleLayer(layer, $index)">
+                <i class="glyphicon" ng-class="{'glyphicon-eye-open': layer.layerOptions.visible===undefined||layer.layerOptions.visible===true, 'glyphicon-eye-close':layer.layerOptions.visible===false}"></i>
+              </a>
             </td>
           </tr>
           </tbody>

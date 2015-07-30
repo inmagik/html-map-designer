@@ -58,8 +58,7 @@
       var pieces = repo.split(":");
       repoConfig.getConfigs(pieces[0], pieces[1], ["mapconfig.json", "geostyle.css"])
       .then(function(data){
-        console.log(data)
-          deferred.resolve([data[0].data, data[1].data]);
+        deferred.resolve([data[0].data, data[1].data]);
       });
       return deferred.promise;
     };
