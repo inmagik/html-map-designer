@@ -54,6 +54,25 @@
       });
 
       modalInstance.result.then(function (ocfg) {
+        //var url = ocfg.user + ":" + ocfg.repo;
+        $scope.loadDropbox(ocfg);
+      
+      });
+    };
+
+    $scope.openLoadDropboxFolderModal = function () {
+      
+      var modalInstance = $modal.open({
+        templateUrl: "templates/load-dropbox-folder.html",
+        controller: 'ModalInstanceCtrl',
+        resolve: {
+          cfg: function () {
+            return { configUrl:'', styleUrl:'' };
+          }
+        }
+      });
+
+      modalInstance.result.then(function (ocfg) {
         console.log(100, ocfg)
         //var url = ocfg.user + ":" + ocfg.repo;
         $scope.loadDropbox(ocfg);
@@ -78,7 +97,6 @@
     };
 
     $scope.loadDropbox = function(cfg){
-      console.log(100 ,cfg)
       ConfigService.getDropboxConfig(cfg).then(function(data){
         $timeout(function(){
           $rootScope.config = {
@@ -86,7 +104,6 @@
               geoStyle : data[1]
           };
           $state.go("map-editor");
-          
         });
       });
     };

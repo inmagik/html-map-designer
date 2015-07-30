@@ -1,13 +1,9 @@
 {
   "title" : "New map",
   "map" : {
-    "center" : [9.2, 45.483333],
-    "centerProjection" : "EPSG:4326",
-    "zoom" : 12,
-    "minZoom" : 10,
-    "maxZoom" : 17,
-    "extent" : [9.0, 45.2, 10, 45.6 ],
-    "extentProjection" : "EPSG:4326"
+    "zoom" : 2,
+    "minZoom" : 1,
+    "maxZoom" : 20
   },
 
   "layers" : [

@@ -166,3 +166,7 @@ body{
 .ol-control.toggled > button {
   background-color: red !important;
 }
+
+a{
+  cursor:pointer;
+}
