@@ -305,10 +305,10 @@
     };
 
     $scope.openLayerModal = function (layerType, cfg) {
-      
       cfg = cfg || { newLayer:true};
       cfg.layerType = layerType;
-      cfg.name = cfg.name || "layer " + $scope.data.config.mapConfig.layers.length+1;
+      cfg.layerOptions = cfg.layerOptions || { opacity : 1};
+      cfg.name = cfg.name || "layer " + ($scope.data.config.mapConfig.layers.length+1).toString();
 
       var modalInstance = $modal.open({
         templateUrl: "templates/layer-modal-"+layerType+".html",

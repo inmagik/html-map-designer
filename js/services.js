@@ -191,7 +191,7 @@
       if(!obj.layerOptions){
         return out;
       }
-      obj.opacity = obj.opacity || 1.0;
+      obj.layerOptions.opacity = obj.layerOptions.opacity || 1.0;
 
       out = _.pick(obj.layerOptions, ['opacity', 'hue', 'contrast', 'brightness', 'visible', 'name']);
       if(obj.minZoom || obj.maxZoom){
