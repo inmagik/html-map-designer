@@ -68,6 +68,7 @@
 
         scope.client = null;
         scope.stat = function(client){
+          console.log("uuu", client)
           scope.client = client;
           client.stat(scope.currentPath, {readDir:true}, function(err, file, files){
             console.log(err, files)
