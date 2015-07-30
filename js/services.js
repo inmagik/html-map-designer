@@ -1,6 +1,17 @@
 (function(){
   "use strict";
 
+  function uuid(prefix) {
+    prefix = prefix || '';
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return prefix + s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+      s4() + '-' + s4() + s4() + s4();
+  };
+
   angular.module("HtmlMap")
   .factory('ConfigService', function($http, $q, repoConfig){
 
@@ -63,6 +74,7 @@
 
     var svc = { };
     svc.registeredStyles = {};
+    svc.requestBases = {};
 
 
     var createOlStyle = function(opts){
@@ -166,7 +178,9 @@
       if(!obj.layerOptions){
         return out;
       }
-      out = _.pick(obj.layerOptions, ['opacity', 'hue', 'contrast', 'brightness']);
+      obj.opacity = obj.opacity || 1.0;
+
+      out = _.pick(obj.layerOptions, ['opacity', 'hue', 'contrast', 'brightness', 'visible', 'name']);
       if(obj.minZoom || obj.maxZoom){
           var v = map.getView();
           var z = 1;
@@ -198,9 +212,11 @@
 
     };
 
-    svc.createLayer= function(obj, map){
+    svc.createLayer = function(obj, map){
 
-      var baseTileOptions =getBaseTileOptions(obj, map);
+      var baseTileOptions = getBaseTileOptions(obj, map);
+      baseTileOptions._id = uuid();
+      baseTileOptions.name = obj.name;
 
       if(obj.layerType == 'stamen'){
         var opts = _.extend(
@@ -257,21 +273,27 @@
       }
       if(obj.layerType == 'cartodb'){
         var l = cartoDBNames[obj.layerOptions.layer];
+        var urls = [
+                    'http://a.basemaps.cartocdn.com/'+l+'/{z}/{x}/{y}.png',
+                    'http://a.basemaps.cartocdn.com/'+l+'/{z}/{x}/{y}.png',
+                    'http://a.basemaps.cartocdn.com/'+l+'/{z}/{x}/{y}.png',
+                    'http://a.basemaps.cartocdn.com/'+l+'/{z}/{x}/{y}.png'
+                ];
+
         var opts = _.extend(
             baseTileOptions,
             {
               title : obj.title || 'CartoDB ' + obj.layerOptions.layer,
               type : "base",
+
               source: new ol.source.XYZ({
-                urls : [
-                    'http://a.basemaps.cartocdn.com/'+l+'/{z}/{x}/{y}.png',
-                    'http://a.basemaps.cartocdn.com/'+l+'/{z}/{x}/{y}.png',
-                    'http://a.basemaps.cartocdn.com/'+l+'/{z}/{x}/{y}.png',
-                    'http://a.basemaps.cartocdn.com/'+l+'/{z}/{x}/{y}.png'
-                ],
-                attributions : [new ol.Attribution({html:'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'})]
-              }
-            )
+                urls : urls,
+                attributions : [ new ol.Attribution({html:'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'})]
+              }),
+
+              //annotation for loading
+              requestBaseUrl : urls
+            
           });
           return new ol.layer.Tile(opts)
 
@@ -330,7 +352,10 @@
 
 
       return null;
-    }
+    };
+
+
+    
 
     return svc;
 
@@ -388,7 +413,36 @@
 
 
 
-  });
+  })
+
+
+  .factory('wooService', [function () {
+
+    (function(open) {
+    XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
+
+        this.addEventListener("readystatechange", function() {
+            //console.log("woo", this.readyState, url); // this one I changed
+            svc.checkRequest(url, this.readyState);
+        }, false);
+
+        open.call(this, method, url, async, user, pass);
+    };
+    })(XMLHttpRequest.prototype.open);
+
+    
+    var svc  ={}
+    svc.checkRequest = function(url, state){
+      console.log("a", url, state)
+    }
+    return svc;
+  }])
+
+
+
+
+
+
 
 
 })();

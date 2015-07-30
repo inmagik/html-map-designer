@@ -1,7 +1,8 @@
 (function(){
   "use strict";
 
-  angular.module("HtmlMap", ['angularModalService', 'ui.ace', 'ui.router', 'ui.bootstrap', 'ui.sortable'])
+  angular.module("HtmlMap", ['angularModalService', 'ui.ace', 'ui.router', 'ui.bootstrap', 
+      'ui.sortable', 'ui.slider'])
   .config(function($locationProvider, $stateProvider, $urlRouterProvider){
     /*
     $locationProvider.html5Mode(
@@ -21,8 +22,9 @@
       url: "/map-editor",
       templateUrl: "templates/map-editor.html",
       controller : 'MapCtrl'
-    })
+    });
 
+    
   })
   .run(function(){
 

@@ -1,81 +1,8 @@
 (function(){
   "use strict";
 
-
-
-  /* custom geolocation control */
-  /**
- * @constructor
- * @extends {ol.control.Control}
- * @param {Object=} opt_options Control options.
- */
- window.customControls = {};
- customControls.ToggleGeolocationControl = function(opt_options) {
-
-  var options = opt_options || {};
-
-  var button = document.createElement('button');
-  button.innerHTML = '<i class="glyphicon glyphicon-record"><i>';
-
-  var this_ = this;
-
-  var element = document.createElement('div');
-  element.appendChild(button);
-
-  this.toggleState = function(state){
-    this_.toggled = state;
-    if(state){
-      element.className = 'geolocation-control ol-unselectable ol-control toggled';
-    } else {
-      element.className = 'geolocation-control ol-unselectable ol-control';
-    }
-  }
-
-  this.toggleState(options.toggled || false);
-
-  var handleClick = function(e) {
-    if(options.toggleFunction){
-      options.toggleFunction.call();
-    }
-    this_.toggleState(!this_.toggled);
-  };
-
-  button.addEventListener('click', handleClick, false);
-  button.addEventListener('touchstart', handleClick, false);
-
-
-
-  ol.control.Control.call(this, {
-    element: element,
-    target: options.target
-  });
-
-};
-ol.inherits(customControls.ToggleGeolocationControl, ol.control.Control);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   angular.module("HtmlMap")
-  .directive('theMap', function(MapsControllerDelegate, $http, $compile, $timeout, OLFactory, $rootScope){
+  .directive('theMap', function(MapsControllerDelegate, $http, $compile, $timeout, OLFactory,wooService, $rootScope){
     return {
         restrict: 'EA',
         template: '<div></div>',
@@ -110,142 +37,51 @@ ol.inherits(customControls.ToggleGeolocationControl, ol.control.Control);
                 //tipLabel: 'Légende' // Optional label for button
               });
               this.map.addControl(this.layerSwitcher);
-            };
+            }
 
+            // Create a popup overlay which will be used to display feature info
+            this.popup = new ol.Overlay.Popup();
+            this.map.addOverlay(this.popup);
 
-            this.geolocationInit = function(){
+            // Add an event handler for the map "singleclick" event
+            this.map.on('click', function(evt) {
+                // Hide existing popup and reset it's offset
+                that.popup.hide();
+                that.popup.setOffset([0, 0]);
 
-              var geolocation = new ol.Geolocation({
-                projection: that.map.getView().getProjection()
-              });
+                // Attempt to find a feature in one of the visible vector layers
+                var featureAndLayer = that.map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
+                    var template = layer.get('templatePopup');
+                    if(template){
+                        return [feature, layer];
+                    }
+                    return [null, null]
+                });
 
-              //var track = new ol.dom.Input(document.getElementById('track'));
-              //track.bindTo('checked', geolocation, 'tracking');
+                if (featureAndLayer) {
+                    var feature = featureAndLayer[0];
+                    var layer = featureAndLayer[1];
+                    var coord= evt.coordinate;
+                    var props = feature.getProperties();
 
-              // update the HTML page when the position changes.
-              geolocation.on('change', function() {
-                return;
-                $('#accuracy').text(geolocation.getAccuracy() + ' [m]');
-                $('#altitude').text(geolocation.getAltitude() + ' [m]');
-                $('#altitudeAccuracy').text(geolocation.getAltitudeAccuracy() + ' [m]');
-                $('#heading').text(geolocation.getHeading() + ' [rad]');
-                $('#speed').text(geolocation.getSpeed() + ' [m/s]');
-              });
+                    $http.get(layer.get('templatePopup'))
+                    .then(function(resp){
 
-              var accuracyFeature = new ol.Feature();
-              geolocation.on('change:accuracyGeometry', function() {
-                accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
-              });
+                      var s = $scope.$new(true);
+                      s.data = { coord :coord, props:props};
+                      $timeout(function(){
 
-              var positionFeature = new ol.Feature();
-              positionFeature.setStyle(new ol.style.Style({
-                image: new ol.style.Circle({
-                  radius: 6,
-                  fill: new ol.style.Fill({
-                    color: '#3399CC'
-                  }),
-                  stroke: new ol.style.Stroke({
-                    color: '#fff',
-                    width: 2
-                  })
-                })
-              }));
-              //optionally we could set a template on feature ..
-              //positionFeature.set('templatePopup', 'templates/example.html')
-
-              geolocation.on('change:position', function() {
-                var coordinates = geolocation.getPosition();
-                positionFeature.setGeometry(coordinates ?
-                    new ol.geom.Point(coordinates) : null);
-              });
-
-              var featuresOverlay = new ol.FeatureOverlay({
-                //map: that.map,
-                features: [accuracyFeature, positionFeature]
-              });
-              //
-              //geolocation.setTracking(true);
-
-              var toggle = function(){
-                if(geolocation.getTracking()){
-                  geolocation.setTracking(false);
-                  featuresOverlay.setMap(null);
-                } else {
-                  geolocation.setTracking(true);
-                  featuresOverlay.setMap(that.map);
+                        var info = resp.data;
+                        // Offset the popup so it points at the middle of the marker not the tip
+                        that.popup.setOffset([0, 0]);
+                        that.popup.show(coord, info);
+                        var cmpl = $compile(that.popup.container);
+                        cmpl(s);
+                      })
+                    });
                 }
-              };
 
-              var geoLocationControl = new customControls.ToggleGeolocationControl({
-                toggleFunction : toggle,
-                toggled : false
-              });
-              that.map.addControl(geoLocationControl);
-
-              // handle geolocation error.
-              geolocation.on('error', function(error) {
-                console.error(error);
-                geoLocationControl.toggleState(false);
-              });
-
-            };
-
-
-            this.popupInit = function(){
-              // Create a popup overlay which will be used to display feature info
-              this.popup = new ol.Overlay.Popup();
-              this.map.addOverlay(this.popup);
-
-              // Add an event handler for the map "singleclick" event
-              this.map.on('click', function(evt) {
-                  // Hide existing popup and reset it's offset
-                  that.popup.hide();
-                  that.popup.setOffset([0, 0]);
-
-                  // Attempt to find a feature in one of the visible vector layers
-                  var featureAndLayer = that.map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
-                      if(!layer){
-                        var ftemplate = feature.get('templatePopup');
-                        if(ftemplate){
-                          return [feature, ftemplate];
-                        }
-                        return;
-                      }
-                      var template = layer.get('templatePopup');
-                      if(template){
-                          return [feature, template];
-                      }
-                      return [null, null]
-                  });
-
-                  if (featureAndLayer) {
-                      var feature = featureAndLayer[0];
-                      var tpl = featureAndLayer[1];
-                      var coord = evt.coordinate;
-                      var props = feature.getProperties();
-
-                      $http.get(tpl)
-                      .then(function(resp){
-                        var s = $scope.$new(true);
-                        s.data = { coord :coord, props:props};
-                        $timeout(function(){
-                          var info = resp.data;
-                          // Offset the popup so it points at the middle of the marker not the tip
-                          that.popup.setOffset([0, 0]);
-                          that.popup.show(coord, info);
-                          var cmpl = $compile(that.popup.container);
-                          cmpl(s);
-                        })
-                      });
-                  }
-
-              });
-            };
-
-            this.popupInit();
-
-            //we could disable geolocation 
-            this.geolocationInit();
+            });
 
           }
 
@@ -323,7 +159,25 @@ ol.inherits(customControls.ToggleGeolocationControl, ol.control.Control);
             }
             if(layer){
               this.map.addLayer(layer);
+
+              var listenerKey = layer.on('change', function(e) {
+                console.log(1, layer.getSource().getState())
+                if (layer.getSource().getState() == 'ready') {
+                  // hide loading icon
+                  // ...
+                  // and unregister the "change" listener 
+                  //ol.Observable.unByKey(listenerKey);
+                  // or vectorSource.unByKey(listenerKey) if
+                  // you don't use the current master branch
+                  // of ol3
+                }
+              });
+
+              return
             }
+
+              
+
           };
 
           this.startMap = function(config){

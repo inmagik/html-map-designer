@@ -288,8 +288,8 @@
     $scope.cfg = cfg;
 
   
-    $scope.ok = function () {
-      $modalInstance.close($scope.cfg);
+    $scope.ok = function (outcfg) {
+      $modalInstance.close(outcfg || $scope.cfg);
     };
 
     $scope.cancel = function () {
