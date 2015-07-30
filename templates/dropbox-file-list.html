@@ -1,0 +1,22 @@
+<div style="height:400px; overflow:scroll;">
+    
+    <table class="table" >
+    <tr ng-if="currentPath!='/'">
+        <td>
+            <a class="btn btn-link" href="" ng-click="statParentPath(currentPath)">..</a></span>
+        </td>
+        <td>
+            
+        </td>
+    </tr>
+    <tr ng-repeat="f in currentFiles" >
+        <td>
+            <span ng-if="!f.isFolder">{{f.path}}</span>
+            <span ng-if="f.isFolder"><a class="" ng-click="statPath(f)">{{f.path}}</a></span>
+        </td>
+        <td>
+            <button class="btn btn-link" ng-if="selectable(f)" ng-click="select(f)">Select</button>
+        </td>
+    </tr>
+    </table>
+</div>

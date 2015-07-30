@@ -121,7 +121,7 @@
 
 
 
-  .controller('MapCtrl', function($scope, $timeout, ConfigService, MapsControllerDelegate, ModalService, $location, $rootScope, $q, $modal, $state){
+  .controller('MapCtrl', function($scope, $timeout, ConfigService, MapsControllerDelegate, ModalService, DropBoxService, $location, $rootScope, $q, $modal, $state){
 
     $scope.data = { config : null, configString : null, mapConfigError:false, geoStyleError:false };
     $scope.ui = { autoZoom : true, panels : { layers:true} };
@@ -284,12 +284,6 @@
       });
     };
 
-
-
-
-
-
-
     $scope.openLayerModal = function (layerType, cfg) {
 
       
@@ -315,27 +309,66 @@
       
       });
 
-    }
+    };
+
+    $scope.saveToDropbox = function(){
+      var modalInstance = $modal.open({
+        templateUrl: "templates/save-dropbox.html",
+        controller: 'SaveDropboxModalInstanceCtrl',
+        resolve: {
+          cfg: function () {
+            return { mapFilename : 'mapconfig.json', styleFilename:'geostyle.css'};
+          }
+        }
+      });
+
+      modalInstance.result.then(function (ocfg) {
+        var folder = ocfg.folder;
+        var files = [
+          { path : folder + "/" + ocfg.mapFilename, content : $scope.data.configString.mapConfig },
+          { path : folder + "/" + ocfg.styleFilename, content : $scope.data.configString.geoStyle }
+        ]
+        DropBoxService.saveFiles(files)
+        .then(function(data){
+          alert("Files saved!")
+        })
+      });
+
+    };
+
+
+
 
 })
 
 
-
-
   .controller('ModalInstanceCtrl', function ($scope, $modalInstance, cfg) {
 
-    $scope.cfg = cfg;
+      $scope.cfg = cfg;
+      $scope.ok = function (outcfg) {
+        $modalInstance.close(outcfg || $scope.cfg);
+      };
+      $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+      };
+
+  })
+
+  .controller('SaveDropboxModalInstanceCtrl', function ($scope, $modalInstance, cfg) {
+
+      $scope.cfg = cfg;
+      $scope.ok = function (outcfg) {
+        $modalInstance.close(outcfg || $scope.cfg);
+      };
+      $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+      };
+
+  });
 
   
-    $scope.ok = function (outcfg) {
-      $modalInstance.close(outcfg || $scope.cfg);
-    };
 
-    $scope.cancel = function () {
-      $modalInstance.dismiss('cancel');
-    };
 
-});
 
 
 
