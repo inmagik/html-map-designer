@@ -3,10 +3,15 @@
 
   angular.module("HtmlMap")
 
-  .controller('BodyCtrl', function($scope,  $rootScope){
+  .controller('BodyCtrl', function($scope,  $rootScope, DropBoxService){
 
     $rootScope.ui = {
       mainViewClass : 'black'
+    }
+
+    $rootScope.loginDropbox = function(){
+      DropBoxService.login();
+
     }
   })
 
@@ -19,8 +24,6 @@
 
 
     $scope.openLoadGitHubModal = function () {
-
-      
       var modalInstance = $modal.open({
         templateUrl: "templates/load-github.html",
         controller: 'ModalInstanceCtrl',
@@ -36,11 +39,47 @@
         $scope.loadGithub(repo);
       
       });
-    }
+    };
+
+    $scope.openLoadDropboxModal = function () {
+      
+      var modalInstance = $modal.open({
+        templateUrl: "templates/load-dropbox.html",
+        controller: 'ModalInstanceCtrl',
+        resolve: {
+          cfg: function () {
+            return { configUrl:'', styleUrl:'' };
+          }
+        }
+      });
+
+      modalInstance.result.then(function (ocfg) {
+        console.log(100, ocfg)
+        //var url = ocfg.user + ":" + ocfg.repo;
+        $scope.loadDropbox(ocfg);
+      
+      });
+    };
+
+    
 
 
     $scope.loadGithub = function(repo){
       ConfigService.getGitHubConfig(repo).then(function(data){
+        $timeout(function(){
+          $rootScope.config = {
+              mapConfig : data[0],
+              geoStyle : data[1]
+          };
+          $state.go("map-editor");
+          
+        });
+      });
+    };
+
+    $scope.loadDropbox = function(cfg){
+      console.log(100 ,cfg)
+      ConfigService.getDropboxConfig(cfg).then(function(data){
         $timeout(function(){
           $rootScope.config = {
               mapConfig : data[0],

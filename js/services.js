@@ -64,6 +64,19 @@
       return deferred.promise;
     };
 
+    svc.getDropboxConfig = function(cfg){
+      var deferred = $q.defer();
+      var p1 = $http.get(cfg.configUrl);
+      var p2 = $http.get(cfg.styleUrl);
+
+      $q.all([p1,p2])
+      .then(function(data){
+        console.log(data)
+          deferred.resolve([data[0].data, data[1].data]);
+      });
+      return deferred.promise;
+    };
+
     return svc;
 
 

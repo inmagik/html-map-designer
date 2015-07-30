@@ -1,0 +1,27 @@
+<div class="modal-header">
+    <h3 class="modal-title">Load from Dropbox</h3>
+</div>
+<div class="modal-body">
+
+    <!--<button class="btn btn-primary" ng-click="loginDropbox()">LOGIN TO DROPBOX</button>-->
+
+    <form name="config" class="form">
+        <div class="form-group">
+            <label>mapconfig</label>
+            <div dropbox-choose ng-model="cfg.configUrl" required></div>
+            {{cfg.configUrl}}
+        </div>
+        <div class="form-group">
+            <label>Repository</label>
+            <div dropbox-choose ng-model="cfg.styleUrl" required></div>
+        </div>
+    </form>
+    
+
+    
+    
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()" ng-disabled="config.$invalid">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
