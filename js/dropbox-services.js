@@ -9,7 +9,7 @@
     var svc = {  };
     svc.client = new Dropbox.Client({key: '7jgs6m9jfn508k9'})
     svc.client.authDriver(new Dropbox.AuthDriver.Popup({
-    receiverUrl: "http://localhost:8000/oauth_receiver.html"}));
+    receiverUrl: "http://inmagik.github.io/html-map-designer/oauth_receiver.html"}));
 
     svc.login = function(cb){
       svc.client.authenticate({interactive: true}, function(error, client){
