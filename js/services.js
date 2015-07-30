@@ -446,7 +446,7 @@
     
     var svc  ={}
     svc.checkRequest = function(url, state){
-      console.log("a", url, state)
+      //console.log("a", url, state)
     }
     return svc;
   }])

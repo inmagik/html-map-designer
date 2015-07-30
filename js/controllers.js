@@ -16,7 +16,7 @@
   })
 
 
-  .controller('StartCtrl', function($scope,  $rootScope, $timeout, ConfigService, $state, $modal){
+  .controller('StartCtrl', function($scope,  $rootScope, $timeout, ConfigService, DropBoxService, $state, $modal){
 
     $timeout(function(){
       $rootScope.ui.mainViewClass = 'mantle';
@@ -97,10 +97,11 @@
     };
 
     $scope.loadDropbox = function(cfg){
-      ConfigService.getDropboxConfig(cfg).then(function(data){
+      //ConfigService.getDropboxConfig(cfg).then(function(data){
+      DropBoxService.loadFiles([cfg.configUrl, cfg.styleUrl]).then(function(data){
         $timeout(function(){
           $rootScope.config = {
-              mapConfig : data[0],
+              mapConfig : JSON.parse(data[0]),
               geoStyle : data[1]
           };
           $state.go("map-editor");
@@ -239,15 +240,8 @@
         }
 
       });
-      console.log(1,c)
-
-
-
-
       $scope.data.config.mapConfig.map.center = c;
       updateCfg();
-
-
     };
 
     /*

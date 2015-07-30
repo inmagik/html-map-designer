@@ -46,6 +46,28 @@
       return $q.all(p);
     }
 
+
+    svc.loadFile = function(path){
+      var out = $q.defer();
+      svc.client.readFile(path, function(error, data) {
+        if (error) {
+          out.reject(err);
+        }
+        console.log("load", data)
+        out.resolve(data);        
+      });
+
+      return out.promise;
+    }
+
+    svc.loadFiles = function(files){
+      var p = [];
+      angular.forEach(files, function(f){
+        p.push(svc.loadFile(f));
+      })
+      return $q.all(p);
+    }
+
     return svc;
 
 
@@ -117,7 +139,6 @@
         }
 
         scope.selectable = function(p){
-          console.log(scope.mode)
           return (scope.mode=='any' || (p.isFolder==true&&scope.mode=='folder') || p.isFolder==false&&scope.mode=='file' );
         }
 
@@ -126,7 +147,7 @@
       }
     };
   }])
-
+  
   .directive('dropboxChoose', ['$timeout', function($timeout){
     // Runs during compile
     return {
@@ -156,6 +177,42 @@
           }
           var button = Dropbox.createChooseButton(options);
           $(iElm).append(button);
+      }
+    };
+  }])
+
+.directive('dropboxChooseButton', ['$timeout', '$modal',function($timeout, $modal){
+    // Runs during compile
+    return {
+      // name: '',
+      // priority: 1,
+      // terminal: true,
+      scope: {}, // {} = isolate, true = child, false/undefined = no change
+      // controller: function($scope, $element, $attrs, $transclude) {},
+      require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
+      // restrict: 'A', // E = Element, A = Attribute, C = Class, M = Comment
+      template: '<button class="btn btn-primary" ng-click="choose()">Choose</button>',
+      link: function($scope, iElm, iAttrs, ngModelController) {
+
+      $scope.choose = function(){
+        var modalInstance = $modal.open({
+        templateUrl: "templates/get-dropbox-file.html",
+        controller: 'ModalInstanceCtrl',
+        resolve: {
+          cfg: function () {
+            return { file : ''};
+          }
+        }
+      });
+
+        modalInstance.result.then(function (ocfg){
+          ngModelController.$setViewValue(ocfg.file);
+        })
+
+      }  
+
+
+          
       }
     };
   }]);
