@@ -184,38 +184,36 @@
 .directive('dropboxChooseButton', ['$timeout', '$modal',function($timeout, $modal){
     // Runs during compile
     return {
-      // name: '',
-      // priority: 1,
-      // terminal: true,
       scope: {}, // {} = isolate, true = child, false/undefined = no change
-      // controller: function($scope, $element, $attrs, $transclude) {},
       require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
-      // restrict: 'A', // E = Element, A = Attribute, C = Class, M = Comment
-      template: '<button class="btn btn-primary" ng-click="choose()">Choose</button>',
+      //template: '<button class="btn btn-primary" ng-click="choose()">Choose</button>',
       link: function($scope, iElm, iAttrs, ngModelController) {
 
-      $scope.choose = function(){
-        var modalInstance = $modal.open({
-        templateUrl: "templates/get-dropbox-file.html",
-        controller: 'ModalInstanceCtrl',
-        resolve: {
-          cfg: function () {
-            return { file : ''};
+        var tpl = iAttrs.mode == 'file' ? 'templates/get-dropbox-file.html' : 'templates/get-dropbox-folder.html';
+
+
+
+        $scope.choose = function(){
+          var modalInstance = $modal.open({
+          templateUrl: tpl,
+          controller: 'ModalInstanceCtrl',
+          resolve: {
+            cfg: function () {
+              return { };
+            }
           }
-        }
-      });
+        });
 
-        modalInstance.result.then(function (ocfg){
-          ngModelController.$setViewValue(ocfg.file);
-        })
+          modalInstance.result.then(function (ocfg){
+            var value = iAttrs.mode == 'file' ? ocfg.file : ocfg.folder;
+            ngModelController.$setViewValue(value);
+          })
 
-      }  
-
-
-          
+        } 
+        iElm.on('click', $scope.choose);
       }
     };
-  }]);
+  }])
 
 
   

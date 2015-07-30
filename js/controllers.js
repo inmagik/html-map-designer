@@ -73,10 +73,9 @@
       });
 
       modalInstance.result.then(function (ocfg) {
-        console.log(100, ocfg)
-        //var url = ocfg.user + ":" + ocfg.repo;
+        ocfg.configUrl = ocfg.folder+"/mapconfig.json";
+        ocfg.styleUrl = ocfg.folder+"/geostyle.css";
         $scope.loadDropbox(ocfg);
-      
       });
     };
 
