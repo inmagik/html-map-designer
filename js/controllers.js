@@ -16,7 +16,7 @@
               mapConfig : data[0],
               geoStyle : data[1]
           };
-          $state.go(path || "map-editor", options);
+          $state.go(path || "map-editor", { repo:repo });
         });
       });
     };
@@ -28,7 +28,7 @@
               mapConfig : JSON.parse(data[0]),
               geoStyle : data[1]
           };
-          $state.go(path || "map-editor", options);
+          $state.go(path || "map-editor", { gist:gist});
         });
       });
     };
@@ -42,7 +42,7 @@
               mapConfig : data[0],
               geoStyle : data[1]
           };
-          $state.go(path || "map-editor", options);
+          $state.go(path || "map-editor", cfg);
         });
       });
     };
@@ -165,7 +165,7 @@
     $scope.ui = { autoZoom : true, panels : { layers:true } };
     
     if(!$rootScope.config){
-      $state.go('start');
+      $state.go('start', $location.search() );
     }
     $timeout(function(){
         $scope.data.config = $rootScope.config

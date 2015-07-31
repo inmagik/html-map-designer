@@ -336,20 +336,31 @@
       }
 
       if(obj.layerType == 'geojson'){
-
         var opts = _.extend(
             baseTileOptions, {
           title : obj.title || obj.name,
           source: new ol.source.Vector({
             url: obj.layerOptions.url,
             format: new ol.format.GeoJSON(),
-
           }),
           style : svc.getStyleFor(obj.name, map)
-
         });
 
         return new ol.layer.Vector(opts);
+      }
+
+      if(obj.layerType == 'wms'){
+        var opts = _.extend(
+            baseTileOptions, {
+          title : obj.title || obj.name,
+          source: new ol.source.TileWMS({
+            url: obj.layerOptions.url,
+            crossOrigin : 'anonymous',
+            params: obj.layerOptions.params
+          })
+        });
+
+        return new ol.layer.Tile(opts);
       }
 
 
