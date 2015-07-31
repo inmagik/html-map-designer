@@ -393,7 +393,6 @@ ol.inherits(customControls.ToggleGeolocationControl, ol.control.Control);
               if(!nv || !nv.mapConfig){
                 return;
               }
-              console.log("config changed")
               //register style
               OLFactory.registerStyle(nv.geoStyle, ctrl.handle);
               //startup map

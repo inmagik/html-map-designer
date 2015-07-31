@@ -21,6 +21,18 @@
       });
     };
 
+    $scope.loadUrls = function(cfg, path, options){
+      ConfigService.getUrlsConfig(cfg).then(function(data){
+        $timeout(function(){
+          $rootScope.config = {
+              mapConfig : data[0],
+              geoStyle : data[1]
+          };
+          $state.go(path || "map-editor", options);
+        });
+      });
+    };
+
     $scope.loadDropbox = function(cfg){
       //ConfigService.getDropboxConfig(cfg).then(function(data){
       DropBoxService.loadFiles([cfg.configUrl, cfg.styleUrl]).then(function(data){
@@ -45,6 +57,10 @@
     var s = $location.search();
     if(s.repo){
       return $scope.loadGithub(s.repo, 'map-viewer');
+    };
+
+    if(s.configUrl && s.styleUrl){
+      return $scope.loadUrls(s, 'map-viewer');
     };
 
     $scope.openLoadGitHubModal = function () {
