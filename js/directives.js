@@ -324,15 +324,14 @@ ol.inherits(customControls.ToggleGeolocationControl, ol.control.Control);
             if(layer){
               this.map.addLayer(layer);
               var listenerKey = layer.on('change', function(e) {
-                console.log(1, layer.getSource().getState())
+                //console.log(1, layer.getSource().getState())
                 if (layer.getSource().getState() == 'ready') {
+                  //console.log(layer.get('title'), "ready")
                   // hide loading icon
                   // ...
                   // and unregister the "change" listener 
                   //ol.Observable.unByKey(listenerKey);
-                  // or vectorSource.unByKey(listenerKey) if
-                  // you don't use the current master branch
-                  // of ol3
+                  
                 }
               });
             }

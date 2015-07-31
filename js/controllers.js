@@ -213,6 +213,9 @@
 
     var updateCfg = function(){
       var deferred = $q.defer();
+      if(!$scope.data || !$scope.data.config){
+        deferred.reject(null);
+      }
       $timeout(function(){
 
         $scope.data.configString = {
