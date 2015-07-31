@@ -11,8 +11,15 @@
             <label>Layer URL</label>
             <input type="text" class="form-control" ng-model="cfg.layerOptions.url" required>
         </div>
-        
 
+        <div class="form-group">
+            <label>Popup</label>
+            <select class="form-control" ng-model="cfg.templatePopup">
+                <option value="">None</option>
+                <option value="templates/table.html">TABLE</option>
+            </select>
+        </div>
+        
         <div ng-include="'templates/layer-base-options.html'">  </div>
 
     </form>
