@@ -63,6 +63,18 @@
       return deferred.promise;
     };
 
+    svc.getGistConfig = function(gist){
+      var deferred = $q.defer();
+      repoConfig.getGistFiles(gist, ["mapconfig.json", "geostyle.css"])
+      .then(function(data){
+        deferred.resolve([data[0], data[1]]);
+      });
+      return deferred.promise;
+    };
+
+
+    
+
     svc.getDropboxConfig = function(cfg){
       var deferred = $q.defer();
       var p1 = $http.get(cfg.configUrl);

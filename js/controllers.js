@@ -21,6 +21,20 @@
       });
     };
 
+    $scope.loadGist = function(gist, path, options){
+      ConfigService.getGistConfig(gist).then(function(data){
+        $timeout(function(){
+          $rootScope.config = {
+              mapConfig : JSON.parse(data[0]),
+              geoStyle : data[1]
+          };
+          $state.go(path || "map-editor", options);
+        });
+      });
+    };
+
+    
+
     $scope.loadUrls = function(cfg, path, options){
       ConfigService.getUrlsConfig(cfg).then(function(data){
         $timeout(function(){
@@ -63,6 +77,10 @@
       return $scope.loadUrls(s, 'map-viewer');
     };
 
+    if(s.gist){
+      return $scope.loadGist(s.gist, 'map-viewer');
+    };
+
     $scope.openLoadGitHubModal = function () {
       var modalInstance = $modal.open({
         templateUrl: "templates/load-github.html",
@@ -73,15 +91,28 @@
           }
         }
       });
-
       modalInstance.result.then(function (ocfg) {
         var repo = ocfg.user + ":" + ocfg.repo;
         $scope.loadGithub(repo);
       });
     };
 
+    $scope.openLoadGistModal = function () {
+      var modalInstance = $modal.open({
+        templateUrl: "templates/load-gist.html",
+        controller: 'ModalInstanceCtrl',
+        resolve: {
+          cfg: function () {
+            return {gist:''};
+          }
+        }
+      });
+      modalInstance.result.then(function (ocfg) {
+        $scope.loadGist(ocfg.gist);
+      });
+    };
+
     $scope.openLoadDropboxModal = function () {
-      
       var modalInstance = $modal.open({
         templateUrl: "templates/load-dropbox.html",
         controller: 'ModalInstanceCtrl',
@@ -91,7 +122,6 @@
           }
         }
       });
-
       modalInstance.result.then(function (ocfg) {
         //var url = ocfg.user + ":" + ocfg.repo;
         $scope.loadDropbox(ocfg);
