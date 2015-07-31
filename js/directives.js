@@ -345,6 +345,8 @@ ol.inherits(customControls.ToggleGeolocationControl, ol.control.Control);
             } else {
               c = config.map.center
             }
+            c = c || [0,0];
+            
             if(config.map.extent && config.map.extentProjection){
               var transformer = ol.proj.getTransform(config.map.extentProjection, 'EPSG:3857');
               e = ol.extent.applyTransform(config.map.extent, transformer);
