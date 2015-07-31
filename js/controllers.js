@@ -8,11 +8,7 @@
     $rootScope.ui = {
       mainViewClass : 'black'
     }
-
-    $rootScope.loginDropbox = function(){
-      DropBoxService.login();
-
-    }
+  
   })
 
 
@@ -37,7 +33,6 @@
       modalInstance.result.then(function (ocfg) {
         var repo = ocfg.user + ":" + ocfg.repo;
         $scope.loadGithub(repo);
-      
       });
     };
 
@@ -56,7 +51,6 @@
       modalInstance.result.then(function (ocfg) {
         //var url = ocfg.user + ":" + ocfg.repo;
         $scope.loadDropbox(ocfg);
-      
       });
     };
 
@@ -88,9 +82,6 @@
         $scope.loadDropbox(ocfg);
       });
     };
-
-    
-
 
     $scope.loadGithub = function(repo){
       ConfigService.getGitHubConfig(repo).then(function(data){
@@ -129,23 +120,13 @@
         });
 
       });
-
     };
-
-
-
   })
+
 
   .controller('LoadCtrl', function($scope,  $rootScope, $timeout){
     $rootScope.ui.mainViewClass = 'cherry';
-
-
-
   })
-
-
-
-
 
 
   .controller('MapCtrl', function($scope, $timeout, ConfigService, MapsControllerDelegate, ModalService, DropBoxService, $location, $rootScope, $q, $modal, $state){
@@ -241,18 +222,14 @@
         deferred.resolve(true);
 
       });
-
       return deferred.promise;
-
-
-    }
+    };
 
     $scope.resetMap = function(){
       MapsControllerDelegate.applyMethod(function(){
         this.resetMap()
       });
     };
-
 
     $scope.setCenter = function(){
       var c;
@@ -316,8 +293,6 @@
             });
             xx();
           });
-
-
       });
     };
 
