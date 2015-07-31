@@ -1,6 +1,16 @@
+<div ng-if="ui.loading">
+    Loading <i class="fa fa-refresh fa-spin"></i>
+</div>
 <div style="height:400px; overflow:scroll;">
-    
-    <table class="table" >
+    <div>
+        <span ng-if="account">
+            Dropbox user: {{account.email}} <button class="btn btn-link" ng-click="logoutDropbox()">LOGOUT</button>
+        </span>
+        
+
+        <button ng-if="!account" class="btn btn-link" ng-click="loginDropbox()">LOGIN</button>
+    </div>
+    <table class="table" ng-if="account">
     <tr ng-if="currentPath!='/'">
         <td>
             <a class="btn btn-link" href="" ng-click="statParentPath(currentPath)">..</a></span>
@@ -19,4 +29,5 @@
         </td>
     </tr>
     </table>
+
 </div>

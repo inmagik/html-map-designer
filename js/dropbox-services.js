@@ -4,27 +4,80 @@
   
 
   angular.module("HtmlMap")
-  .factory('DropBoxService', function($http, $q, $modal){
+  .factory('DropBoxService', function($http, $q, $modal, $rootScope){
 
     var svc = {  };
+    svc.authenticated = false;
+    svc.account = null;
+
+    var receiverUrl = window.location.origin + window.location.pathname + "oauth_receiver.html";
     svc.client = new Dropbox.Client({key: '7jgs6m9jfn508k9'})
     svc.client.authDriver(new Dropbox.AuthDriver.Popup({
-    receiverUrl: "https://inmagik.github.io/html-map-designer/oauth_receiver.html"}));
+    receiverUrl: receiverUrl}));
 
-    svc.login = function(cb){
+
+    svc.getAccountInfo = function(){
+      svc.client.getAccountInfo(function(err, info){
+        if(err){
+          svc.account = null;
+          return
+        };
+        if(info){
+          svc.account = info;
+          $rootScope.$broadcast('loginDropbox', info);
+        }
+      });
+    };
+
+    svc.client.authenticate({interactive: false}, function(error, client){
+      if(error){
+        svc.authenticated = false;
+        svc.client.reset();
+        return;
+      }
+      if(client.isAuthenticated()){
+        svc.authenticated = true;
+        svc.getAccountInfo();
+      } else {
+        svc.client.reset();
+      }
+    });
+
+
+    svc.login = function(cb, errorcb){
       svc.client.authenticate({interactive: true}, function(error, client){
         if(error){
-          console.error(error);
+          svc.authenticated = false;
+          svc.client.reset();
+          if(errorcb){
+            errorcb();
+          }
+          return;
         }
-        if(client){
-          console.log(client)
+        if(client.isAuthenticated()){
+          svc.authenticated = true;
+          svc.getAccountInfo();
           if(cb){
             cb(client);  
           }
-          
         }
       })
     };
+
+    
+
+    svc.logout = function(cb){
+      svc.client.signOut(function(){
+        svc.authenticated=false;
+        svc.account = null;
+        svc.client.reset();
+        if(cb){
+          cb();  
+        }
+      })
+    }
+
+
 
     svc.saveFile = function(path, content){
       var out = $q.defer();
@@ -53,7 +106,6 @@
         if (error) {
           out.reject(err);
         }
-        console.log("load", data)
         out.resolve(data);        
       });
 
@@ -97,12 +149,40 @@
 
   })
 
-  .directive('dropboxTree', ['DropBoxService', '$timeout', function (DropBoxService, $timeout) {
+  .directive('dropboxTree', ['DropBoxService', '$timeout','$rootScope', function (DropBoxService, $timeout, $rootScope) {
     return {
       restrict: 'A',
       require : 'ngModel',
       templateUrl : 'templates/dropbox-file-list.html',
       link: function (scope, iElement, iAttrs, ngModelController) {
+
+        scope.authenticated = false;
+        scope.ui = {loading: false}
+        
+        //THIS LISTENER IS NEEDED AS THE WATCH OF "account" is not triggered on interactive login
+        scope.$on('loginDropbox', function(evt, data){
+          $timeout(function(){
+            scope.account = data;  
+          });
+        })
+
+        scope.logoutDropbox = function(){
+          scope.ui.loading = true;
+          DropBoxService.logout(function(){
+            $timeout(function(){
+              scope.ui.loading = false;
+            })
+            
+          });
+        };
+
+        scope.loginDropbox = function(){
+          DropBoxService.login(function(){
+            scope.stat();
+          });
+        }
+
+
         scope.currentFiles = [];
         scope.currentPath = '/';
         var el = $(iElement);
@@ -114,10 +194,11 @@
 
         scope.client = null;
         scope.stat = function(client){
-          console.log("uuu", client)
+          scope.ui.loading = true;
           scope.client = client;
           client.stat(scope.currentPath, {readDir:true}, function(err, file, files){
-            console.log(err, files)
+            scope.ui.loading = false;
+          
             $timeout(function(){
               scope.currentFiles = files;  
               el.scrollTop();
@@ -125,11 +206,17 @@
           })
         }
 
-        if(DropBoxService.client.isAuthenticated()){
-          scope.stat(DropBoxService.client)
-        } else {
-          DropBoxService.login(scope.stat)
-        }
+        scope.$watch(function(){
+          return DropBoxService.account;
+        }, function(nv){
+          $timeout(function(){
+            scope.account = nv;  
+            if(nv){
+              scope.stat(DropBoxService.client);
+            }
+          });
+        }, true);
+
 
         scope.statPath = function(f){
           if(!f.isFolder){
@@ -151,20 +238,20 @@
             scope.selectPath(p);            
           }
           scope.stat(scope.client);
-        }
+        };
 
         scope.select = function(p){
           if(scope.selectable(p))
           ngModelController.$setViewValue(p.path);
-        }
+        };
 
         scope.selectPath = function(path){
          ngModelController.$setViewValue(path); 
-        }
+        };
 
         scope.selectable = function(p){
           return (scope.mode=='any' || (p.isFolder==true&&scope.mode=='folder') || p.isFolder==false&&scope.mode=='file' );
-        }
+        };
 
 
         
