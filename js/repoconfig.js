@@ -68,5 +68,34 @@ angular.module('HtmlMap')
     }
 
 
+    svc.getGistFiles = function(gist, filenames){
+        var deferred = $q.defer();
+        var github = new Github({});
+        var gist = github.getGist(gist);
+
+        gist.read(function(err, gist) {
+            if(err){
+                deferred.reject(err);
+                return
+            }
+            out = []
+            angular.forEach(filenames, function(f){
+                var df = gist.files[f]
+                if(!df){
+                    deferred.reject({message:"File not found:f"});
+                    return;
+                }
+                out.push(df.content);
+            })
+            deferred.resolve(out);
+        });
+
+        return deferred.promise;
+    }
+
+
+
+
+
     return svc;
 }])

@@ -9,17 +9,47 @@
       mainViewClass : 'black'
     }
 
+
+    $scope.notifyError = function(msg){
+      var bigbox = humane.create({baseCls: 'humane-flatty', timeout:0, clickToClose:true})
+      bigbox.error = bigbox.spawn({addnCls: 'humane-flatty-error'})
+      bigbox.error(msg)
+
+    }
+
     $scope.loadGithub = function(repo, path, options){
-      ConfigService.getGitHubConfig(repo).then(function(data){
+      ConfigService.getGitHubConfig(repo)
+      .then(function(data){
         $timeout(function(){
           $rootScope.config = {
               mapConfig : data[0],
               geoStyle : data[1]
           };
-          $state.go(path || "map-editor", options);
+          $state.go(path || "map-editor", { repo:repo });
         });
-      });
+      })
+      .catch(function(err){
+        $scope.notifyError("Aw .. snap :( <br> Your github repo : "+repo+" cannot be loaded")
+      })
     };
+
+    $scope.loadGist = function(gist, path, options){
+      ConfigService.getGistConfig(gist)
+      .then(function(data){
+        $timeout(function(){
+          $rootScope.config = {
+              mapConfig : JSON.parse(data[0]),
+              geoStyle : data[1]
+          };
+          $state.go(path || "map-editor", { gist:gist});
+        });
+      })
+      .catch(function(err){
+        $scope.notifyError("Aw .. snap :( <br> Your gist : "+gist+" cannot be loaded")
+      })
+    };
+
+    
 
     $scope.loadUrls = function(cfg, path, options){
       ConfigService.getUrlsConfig(cfg).then(function(data){
@@ -28,14 +58,15 @@
               mapConfig : data[0],
               geoStyle : data[1]
           };
-          $state.go(path || "map-editor", options);
+          $state.go(path || "map-editor", cfg);
         });
       });
     };
 
     $scope.loadDropbox = function(cfg){
       //ConfigService.getDropboxConfig(cfg).then(function(data){
-      DropBoxService.loadFiles([cfg.configUrl, cfg.styleUrl]).then(function(data){
+      DropBoxService.loadFiles([cfg.configUrl, cfg.styleUrl])
+      .then(function(data){
         $timeout(function(){
           $rootScope.config = {
               mapConfig : JSON.parse(data[0]),
@@ -43,7 +74,10 @@
           };
           $state.go("map-editor");
         });
-      });
+      })
+      .catch(function(err){
+        $scope.notifyError("Aw .. snap :( <br> Your dropbox folder does not contain valid map files")
+      })
     };
   })
 
@@ -56,11 +90,15 @@
 
     var s = $location.search();
     if(s.repo){
-      return $scope.loadGithub(s.repo, 'map-viewer');
+      $scope.loadGithub(s.repo, 'map-viewer');
     };
 
     if(s.configUrl && s.styleUrl){
-      return $scope.loadUrls(s, 'map-viewer');
+      $scope.loadUrls(s, 'map-viewer');
+    };
+
+    if(s.gist){
+      $scope.loadGist(s.gist, 'map-viewer');
     };
 
     $scope.openLoadGitHubModal = function () {
@@ -73,15 +111,28 @@
           }
         }
       });
-
       modalInstance.result.then(function (ocfg) {
         var repo = ocfg.user + ":" + ocfg.repo;
         $scope.loadGithub(repo);
       });
     };
 
+    $scope.openLoadGistModal = function () {
+      var modalInstance = $modal.open({
+        templateUrl: "templates/load-gist.html",
+        controller: 'ModalInstanceCtrl',
+        resolve: {
+          cfg: function () {
+            return {gist:''};
+          }
+        }
+      });
+      modalInstance.result.then(function (ocfg) {
+        $scope.loadGist(ocfg.gist);
+      });
+    };
+
     $scope.openLoadDropboxModal = function () {
-      
       var modalInstance = $modal.open({
         templateUrl: "templates/load-dropbox.html",
         controller: 'ModalInstanceCtrl',
@@ -91,7 +142,6 @@
           }
         }
       });
-
       modalInstance.result.then(function (ocfg) {
         //var url = ocfg.user + ":" + ocfg.repo;
         $scope.loadDropbox(ocfg);
@@ -135,7 +185,7 @@
     $scope.ui = { autoZoom : true, panels : { layers:true } };
     
     if(!$rootScope.config){
-      $state.go('start');
+      $state.go('start', $location.search() );
     }
     $timeout(function(){
         $scope.data.config = $rootScope.config
@@ -177,7 +227,7 @@
       });
     };
 
-    var updateCfg = function(){
+    var updateCfg = $scope.updateCfg = function(){
       var deferred = $q.defer();
       if(!$scope.data || !$scope.data.config){
         deferred.reject(null);
@@ -199,6 +249,13 @@
       MapsControllerDelegate.applyMethod(function(){
         this.resetMap()
       });
+    };
+
+    $scope.toEditor = function(){
+      $state.go('map-editor', $location.search())
+    };
+    $scope.toViewer = function(){
+      $state.go('map-viewer', $location.search())
     };
 
     $scope.setCenter = function(){
@@ -330,6 +387,8 @@
       };
 
   })
+
+  
 
   .controller('SaveDropboxModalInstanceCtrl', function ($scope, $modalInstance, cfg) {
 

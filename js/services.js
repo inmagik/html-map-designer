@@ -59,7 +59,22 @@
       repoConfig.getConfigs(pieces[0], pieces[1], ["mapconfig.json", "geostyle.css"])
       .then(function(data){
         deferred.resolve([data[0].data, data[1].data]);
+      })
+      .catch(function(err){
+        deferred.reject(err);
       });
+      return deferred.promise;
+    };
+
+    svc.getGistConfig = function(gist){
+      var deferred = $q.defer();
+      repoConfig.getGistFiles(gist, ["mapconfig.json", "geostyle.css"])
+      .then(function(data){
+        deferred.resolve([data[0], data[1]]);
+      })
+      .catch(function(err){
+        deferred.reject(err);
+      })
       return deferred.promise;
     };
 
@@ -324,20 +339,31 @@
       }
 
       if(obj.layerType == 'geojson'){
-
         var opts = _.extend(
             baseTileOptions, {
           title : obj.title || obj.name,
           source: new ol.source.Vector({
             url: obj.layerOptions.url,
             format: new ol.format.GeoJSON(),
-
           }),
           style : svc.getStyleFor(obj.name, map)
-
         });
 
         return new ol.layer.Vector(opts);
+      }
+
+      if(obj.layerType == 'wms'){
+        var opts = _.extend(
+            baseTileOptions, {
+          title : obj.title || obj.name,
+          source: new ol.source.TileWMS({
+            url: obj.layerOptions.url,
+            crossOrigin : 'anonymous',
+            params: obj.layerOptions.paramsgetGistFiles
+          })
+        });
+
+        return new ol.layer.Tile(opts);
       }
 
 

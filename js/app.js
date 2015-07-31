@@ -12,22 +12,22 @@
     */
 
     $urlRouterProvider.otherwise(function() {
-        return '/start' + location.search;
+        return '/' + location.search;
       });
 
     $stateProvider
     .state('start', {
-      url: "/start",
+      url: "/?repo&gist",
       templateUrl: "templates/start.html",
       controller : 'StartCtrl'
     })
     .state('map-editor', {
-      url: "/map-editor",
+      url: "/map-editor?repo&gist",
       templateUrl: "templates/map-editor.html",
       controller : 'MapCtrl'
     })
     .state('map-viewer', {
-      url: "/",
+      url: "/view?repo&gist",
       templateUrl: "templates/map-viewer.html",
       controller : 'MapCtrl'
     });
