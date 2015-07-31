@@ -11,7 +11,10 @@
     );
     */
 
-    $urlRouterProvider.otherwise("/start");
+    $urlRouterProvider.otherwise(function() {
+        return '/start' + location.search;
+      });
+
     $stateProvider
     .state('start', {
       url: "/start",
@@ -21,6 +24,11 @@
     .state('map-editor', {
       url: "/map-editor",
       templateUrl: "templates/map-editor.html",
+      controller : 'MapCtrl'
+    })
+    .state('map-viewer', {
+      url: "/",
+      templateUrl: "templates/map-viewer.html",
       controller : 'MapCtrl'
     });
 

@@ -3,21 +3,49 @@
 
   angular.module("HtmlMap")
 
-  .controller('BodyCtrl', function($scope,  $rootScope, DropBoxService){
+  .controller('BodyCtrl', function($scope,  $rootScope, DropBoxService, ConfigService, $timeout, $state){
 
     $rootScope.ui = {
       mainViewClass : 'black'
     }
-  
+
+    $scope.loadGithub = function(repo, path, options){
+      ConfigService.getGitHubConfig(repo).then(function(data){
+        $timeout(function(){
+          $rootScope.config = {
+              mapConfig : data[0],
+              geoStyle : data[1]
+          };
+          $state.go(path || "map-editor", options);
+        });
+      });
+    };
+
+    $scope.loadDropbox = function(cfg){
+      //ConfigService.getDropboxConfig(cfg).then(function(data){
+      DropBoxService.loadFiles([cfg.configUrl, cfg.styleUrl]).then(function(data){
+        $timeout(function(){
+          $rootScope.config = {
+              mapConfig : JSON.parse(data[0]),
+              geoStyle : data[1]
+          };
+          $state.go("map-editor");
+        });
+      });
+    };
   })
 
 
-  .controller('StartCtrl', function($scope,  $rootScope, $timeout, ConfigService, DropBoxService, $state, $modal){
+  .controller('StartCtrl', function($scope,  $rootScope, $timeout, ConfigService, DropBoxService, $state, $modal, $location){
 
     $timeout(function(){
       $rootScope.ui.mainViewClass = 'mantle';
     });
 
+    var s = $location.search();
+    if(s.repo){
+      return $scope.loadGithub(s.repo, 'map-viewer');
+    };
 
     $scope.openLoadGitHubModal = function () {
       var modalInstance = $modal.open({
@@ -57,57 +85,14 @@
     $scope.openLoadDropboxFolderModal = function () {
 
       DropBoxService.chooseWithModal("folder")
-            .then(function(folder){
-              var ocfg = {};
-              ocfg.configUrl = folder+"/mapconfig.json";
-              ocfg.styleUrl = folder+"/geostyle.css";
-              $scope.loadDropbox(ocfg);
-            });
-
-      return;
-      
-      var modalInstance = $modal.open({
-        templateUrl: "templates/load-dropbox-folder.html",
-        controller: 'ModalInstanceCtrl',
-        resolve: {
-          cfg: function () {
-            return { configUrl:'', styleUrl:'' };
-          }
-        }
-      });
-
-      modalInstance.result.then(function (ocfg) {
-        ocfg.configUrl = ocfg.folder+"/mapconfig.json";
-        ocfg.styleUrl = ocfg.folder+"/geostyle.css";
+      .then(function(folder){
+        var ocfg = {};
+        ocfg.configUrl = folder+"/mapconfig.json";
+        ocfg.styleUrl = folder+"/geostyle.css";
         $scope.loadDropbox(ocfg);
       });
     };
 
-    $scope.loadGithub = function(repo){
-      ConfigService.getGitHubConfig(repo).then(function(data){
-        $timeout(function(){
-          $rootScope.config = {
-              mapConfig : data[0],
-              geoStyle : data[1]
-          };
-          $state.go("map-editor");
-          
-        });
-      });
-    };
-
-    $scope.loadDropbox = function(cfg){
-      //ConfigService.getDropboxConfig(cfg).then(function(data){
-      DropBoxService.loadFiles([cfg.configUrl, cfg.styleUrl]).then(function(data){
-        $timeout(function(){
-          $rootScope.config = {
-              mapConfig : JSON.parse(data[0]),
-              geoStyle : data[1]
-          };
-          $state.go("map-editor");
-        });
-      });
-    };
 
     $scope.createMap = function(){
       ConfigService.getLocalConfig().then(function(data){
@@ -118,7 +103,6 @@
           };
           $state.go("map-editor");
         });
-
       });
     };
   })
@@ -132,8 +116,8 @@
   .controller('MapCtrl', function($scope, $timeout, ConfigService, MapsControllerDelegate, ModalService, DropBoxService, $location, $rootScope, $q, $modal, $state){
 
     $scope.data = { config : null, configString : null, mapConfigError:false, geoStyleError:false };
-    $scope.ui = { autoZoom : true, panels : { layers:true} };
-
+    $scope.ui = { autoZoom : true, panels : { layers:true } };
+    
     if(!$rootScope.config){
       $state.go('start');
     }
@@ -175,56 +159,23 @@
         var v = l.get('visible')
         l.set('visible', !v);
       });
-      
-      //updateCfg().then($scope.updateMap)
-    }
-
-  
-  
-
-    /*
-    if (s.repo){
-      ConfigService.getGitHubConfig(s.repo).then(function(data){
-        $timeout(function(){
-          $scope.data.config = {
-              mapConfig : data[0],
-              geoStyle : data[1]
-          };
-          updateCfg();
-        });
-      });
-
-    } else {
-
-      ConfigService.getLocalConfig().then(function(data){
-        $timeout(function(){
-          $scope.data.config = {
-              mapConfig : data[0],
-              geoStyle : data[1]
-          };
-          updateCfg();
-
-        });
-
-      });
-
     };
-    */
 
     var updateCfg = function(){
       var deferred = $q.defer();
       if(!$scope.data || !$scope.data.config){
         deferred.reject(null);
+
+      } else {
+        $timeout(function(){
+
+          $scope.data.configString = {
+              mapConfig : JSON.stringify($scope.data.config.mapConfig, null, 4),
+              geoStyle : $scope.data.config.geoStyle
+          };
+          deferred.resolve(true);
+        });
       }
-      $timeout(function(){
-
-        $scope.data.configString = {
-            mapConfig : JSON.stringify($scope.data.config.mapConfig, null, 4),
-            geoStyle : $scope.data.config.geoStyle
-        };
-        deferred.resolve(true);
-
-      });
       return deferred.promise;
     };
 
@@ -267,8 +218,7 @@
       } catch(err){
         $timeout(function(){
             $scope.data.mapConfigError = true;
-        })
-
+        });
         return;
       }
 
@@ -351,10 +301,7 @@
 
     };
 
-
-
-
-})
+  })
 
 
   .controller('ModalInstanceCtrl', function ($scope, $modalInstance, cfg) {
@@ -380,13 +327,6 @@
       };
 
   });
-
-  
-
-
-
-
-
 
 
 })();
