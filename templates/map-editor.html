@@ -45,7 +45,6 @@
 
       <div class="navbar-left">
         <button type="button" class="btn btn-sm btn-default navbar-btn" ng-click="resetMap()">Reset zoom</button>
-        <button type="button" class="btn btn-sm btn-default navbar-btn" ng-click="setCenter()">Center here</button>
       </div>
       <div class="navbar-right">
         
@@ -72,6 +71,66 @@
 -->
 
 <accordion close-others="false" >
+
+  </accordion-group>
+    <accordion-group is-open="ui.panels.mapcfg">
+        <accordion-heading class="panel-warning">
+            Map properties <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': ui.panels.mapcfg, 'glyphicon-chevron-right': !ui.panels.mapcfg}"></i>
+        </accordion-heading>
+        <div>
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Map title</label>
+              <div class="col-sm-10">
+              <input type="text" class="form-control" ng-model="data.config.mapConfig.title" ng-change="updateCfg()">
+              </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Min Zoom: {{data.config.mapConfig.map.minZoom}}</label>
+                <div class="col-sm-10">
+                <input type="range" min="1" max="20" step="1" ng-model="data.config.mapConfig.map.minZoom" ng-change="updateCfg()">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Max Zoom: {{data.config.mapConfig.map.maxZoom}}</label>
+                <div class="col-sm-10">
+                <input type="range" min="1" max="20" step="1" ng-model="data.config.mapConfig.map.maxZoom" ng-change="updateCfg()">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Map Zoom: {{data.config.mapConfig.map.zoom}}</label>
+                <div class="col-sm-10">
+                <input type="range" min="1" max="20" step="1" ng-model="data.config.mapConfig.map.zoom" ng-change="updateCfg()">
+                </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Map center</label>
+              <div class="col-sm-8">
+                <textarea class="form-control" disabled>  {{ data.config.mapConfig.map.center }} - {{ data.config.mapConfig.map.centerProjection }}</textarea>
+              </div>
+              <div class="col-sm-2">
+                <button type="button" class="btn btn-sm btn-primary" ng-click="setCenter()">Center here</button>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Map extent</label>
+              <div class="col-sm-8">
+                <textarea class="form-control" disabled>  {{ data.config.mapConfig.map.extent }} - {{ data.config.mapConfig.map.extentProjection }}</textarea>
+              </div>
+              <div class="col-sm-2">
+                <button type="button" class="btn btn-sm btn-primary" ng-click="drawExtent()">Draw extent</button>
+              </div>
+            </div>
+          </form>
+        </div>
+    </accordion-group>
+
+
+
     <accordion-group is-open="ui.panels.layers">
       <accordion-heading>
           Layers <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': ui.panels.layers, 'glyphicon-chevron-right': !ui.panels.layers}"></i>

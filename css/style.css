@@ -200,3 +200,7 @@ body{
 a{
   cursor:pointer;
 }
+
+.btn:focus, a:focus {
+  outline: none;
+}

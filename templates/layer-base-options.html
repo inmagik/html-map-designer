@@ -1,16 +1,14 @@
 <div class="form-group">
     <label>Opacity {{cfg.layerOptions.opacity}}</label>
-    <input type="range" min="0" max="1" step="0.05" class="foxrm-control" ng-model="cfg.layerOptions.opacity">
+    <input type="range" min="0" max="1" step="0.05" class="form-control" ng-model="cfg.layerOptions.opacity">
 </div>
 
 <div class="form-group">
     <label>Min Zoom</label>
-    <slider ng-model="cfg.minZoom" min="1" step="1" max="20" tooltip="hide"></slider>
-    <!--<input type="number" class="form-control" ng-model="cfg.minZoom">-->
+    <input type="range" min="1" max="20" step="1" class="form-control" ng-model="cfg.minZoom">
 </div>
 
 <div class="form-group">
     <label>Max Zoom</label>
-    <slider ng-model="cfg.maxZoom" min="1" step="1" max="20" tooltip="hide"></slider>
-    <!--<input type="number" class="form-control" ng-model="cfg.maxZoom">-->
+    <input type="range" min="1" max="20" step="1" class="form-control" ng-model="cfg.maxZoom">
 </div>

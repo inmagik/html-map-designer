@@ -177,7 +177,7 @@
       });
     };
 
-    var updateCfg = function(){
+    var updateCfg = $scope.updateCfg = function(){
       var deferred = $q.defer();
       if(!$scope.data || !$scope.data.config){
         deferred.reject(null);
@@ -330,6 +330,8 @@
       };
 
   })
+
+  
 
   .controller('SaveDropboxModalInstanceCtrl', function ($scope, $modalInstance, cfg) {
 
