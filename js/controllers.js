@@ -202,18 +202,17 @@
     };
 
     $scope.setCenter = function(){
+      //we also set center projection, using wgs
       var c;
       var cfg = $scope.data.config.mapConfig.map;
       MapsControllerDelegate.applyMethod(function(){
         var x = this.map.getView();
-        console.log("c", x.getProjection())
         c = x.getCenter();
-        if(cfg.centerProjection){
-          c = this.fromInternalPoint(c, cfg.centerProjection || 'EPSG:3857')
-        }
-
+        c = ol.proj.transform(c, x.getProjection(), 'EPSG:4326')
+        cfg.centerProjection = 'EPSG:4326';
       });
       $scope.data.config.mapConfig.map.center = c;
+      $scope.data.config.mapConfig.map.centerProjection = 'EPSG:4326';
       updateCfg();
     };
 
