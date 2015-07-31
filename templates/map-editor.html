@@ -8,7 +8,7 @@
       <p class="navbar-text " style="color:white">
         <a ui-sref="start"><i class="glyphicon glyphicon-home" ></i></a>
         MAP DESIGNER | {{ data.config.mapConfig.title }}
-        <a ui-sref="map-viewer">Show map</a>
+        <a ng-click="toViewer()">Show map</a>
       </p>
       
     </div>
@@ -177,6 +177,9 @@
             </td>
             <td>
                 {{layer.name}}
+            </td>
+            <td>
+              <span class="label label-default">{{layer.layerType}}</span>
             </td>
             <td>
               <a class="btn btn-link" ng-click="openLayerModal(layer.layerType, layer)">edit</a>

@@ -80,7 +80,12 @@ angular.module('HtmlMap')
             }
             out = []
             angular.forEach(filenames, function(f){
-                out.push(gist.files[f].content);
+                var df = gist.files[f]
+                if(!df){
+                    deferred.reject({message:"File not found:f"});
+                    return;
+                }
+                out.push(df.content);
             })
             deferred.resolve(out);
         });

@@ -59,6 +59,9 @@
       repoConfig.getConfigs(pieces[0], pieces[1], ["mapconfig.json", "geostyle.css"])
       .then(function(data){
         deferred.resolve([data[0].data, data[1].data]);
+      })
+      .catch(function(err){
+        deferred.reject(err);
       });
       return deferred.promise;
     };
@@ -68,12 +71,12 @@
       repoConfig.getGistFiles(gist, ["mapconfig.json", "geostyle.css"])
       .then(function(data){
         deferred.resolve([data[0], data[1]]);
-      });
+      })
+      .catch(function(err){
+        deferred.reject(err);
+      })
       return deferred.promise;
     };
-
-
-    
 
     svc.getDropboxConfig = function(cfg){
       var deferred = $q.defer();
@@ -356,7 +359,7 @@
           source: new ol.source.TileWMS({
             url: obj.layerOptions.url,
             crossOrigin : 'anonymous',
-            params: obj.layerOptions.params
+            params: obj.layerOptions.paramsgetGistFiles
           })
         });
 

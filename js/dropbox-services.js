@@ -104,7 +104,7 @@
       var out = $q.defer();
       svc.client.readFile(path, function(error, data) {
         if (error) {
-          out.reject(err);
+          out.reject(error);
         }
         out.resolve(data);        
       });
